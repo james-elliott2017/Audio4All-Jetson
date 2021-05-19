@@ -2,11 +2,13 @@
 #Not needed for inferencing
 import sys
 import os
+import ast
 
 def i2c_out(chord_list,stop_bit = "z",bus = 0, teensy_address=8):
 	stop_byte = int(format(ord(stop_bit),'08b'),2)
 	print("Stop Byte: {}".format(stop_byte))
 
+	chord_list = ast.literal_eval(chord_list)
 	##########################################################################
 	for num in chord_list:
 		input_str = "i2cset -f -y {} {} {}".format(bus,teensy_address,num)

@@ -4,6 +4,7 @@ import serial
 import codecs
 import os
 import sys
+import ast
 from I2C_example import i2c_out
 
 print("UART Demonstration Program")
@@ -41,9 +42,11 @@ try:
             	char_list[0] = data
             elif char_list[0] == "[" and data == "]":
             	char_list.append(data)
-            	print("Package Collected:\n{}".format(char_list))
-            	print("List Version: {}".format(char_to_str(char_list)))
-            	i2c_out(char_to_str(char_list))
+            	#print("Package Collected:\n{}".format(char_list))
+            	lst = char_to_str(char_list)
+            	print(type(lst))
+            	print("List Version: {}".format(lst))
+            	i2c_out(lst)
             	char_list = ["none"]
             elif char_list[0] == "[":
             	char_list.append(data)
