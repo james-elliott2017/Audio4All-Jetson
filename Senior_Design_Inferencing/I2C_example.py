@@ -1,20 +1,25 @@
 #I2C Code Example
 #Not needed for inferencing
-#import sys
-#import os
+import sys
+import os
 
-def i2c_out(chord_list,stop_bit = "z",bus = 0, teensy_address=9):
+def i2c_out(chord_list,stop_bit = "z",bus = 0, teensy_address=8):
 	stop_byte = int(format(ord(stop_bit),'08b'),2)
 	print("Stop Byte: {}".format(stop_byte))
 
 	##########################################################################
-	for num in test_string:
+	for num in chord_list:
 		input_str = "i2cset -f -y {} {} {}".format(bus,teensy_address,num)
 		print(input_str)
 		os.system(input_str)
 	input_str = "i2cset -f -y {} {} {}".format(bus,teensy_address,stop_byte)
 	os.system(input_str)
 	##########################################################################
+def char_to_str(str_list):
+	final_string = ""
+	for char in str_list:
+		final_string += str(char)
+	return final_string
 def uart_to_list(string_list):
 	data_str = string_list
 	#remove whitespace
