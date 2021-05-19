@@ -13,6 +13,7 @@ import os
 import ast #used for str(list) -->
 from I2C_example import i2c_out
 from I2C_example import uart_to_list
+from I2C_example import char_to_str
 
 #Main File for Jetson Inference Package
 from tree_imports import dataset
@@ -23,31 +24,16 @@ from tree_imports import listToMidi
 import tree_class
 from tree_class import forest
 
-def Main():
-    serial_port = serial.Serial(
-        port="/dev/ttyTHS1",
-        baudrate=115200,
-        bytesize=serial.EIGHTBITS,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-    )
-    # Wait a second to let the port initialize
-    time.sleep(1)
-    idx = 0 #index to decide if progression is over
-    initial_flag = True #first pass has different calling
-    chord_out = None #initial chord for sending purposes
-    try:
-        print("Loop Started")
-        while True:
-            if serial_port.inWaiting() > 0:
-                data = serial_port.read()
-                print(data)
-                #convert to list
-                data_list = ast.literal_eval(data)
-
-                if initial_flag == True:
+class modelMain():
+	def __init__(self):
+		self.idx = 0 #index to decide if progression is over
+		self.initial_flag = True #first pass has different calling
+		self.chord_out = None #initial chord for sending purposes
+	def __modelcheck(self):
+if initial_flag == True:
                     #grab starting chord
                     if data_list in tree_bases:
+
                         base_index = tree_bases.index(data_list)
                         start_chord = tree_bases[base_index]
                     else:
@@ -67,6 +53,7 @@ def Main():
                         idx += 1
                         chord_out = random_prog[idx]
                     else:
+
                         if data_list in tree_bases:
                             base_index = tree_bases.index(data_list)
                             start_chord = tree_bases[base_index]
@@ -78,6 +65,27 @@ def Main():
                         random_prog = chordForest.random_chord_progression()
                         idx = 1
                         chord_out = random_prog[idx]
+		
+		
+
+def Main():
+    serial_port = serial.Serial(
+        port="/dev/ttyTHS1",
+        baudrate=115200,
+        bytesize=serial.EIGHTBITS,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+    )
+    # Wait a second to let the port initialize
+    time.sleep(1)
+    try:
+        print("Loop Started")
+        while True:
+            if serial_port.inWaiting() > 0:
+                data = serial_port.read()
+                print(data)
+                #convert to list
+                data_list = ast.literal_eval(data)
 
                 #data check
                 if chord_out != None:
