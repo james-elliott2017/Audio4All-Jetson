@@ -11,7 +11,8 @@ import serial
 #I2C Packages
 import os
 import ast #used for str(list) -->
-
+from I2C_example import i2c_out
+from I2C_example import uart_to_list
 
 #Main File for Jetson Inference Package
 from tree_imports import dataset
@@ -21,12 +22,6 @@ from tree_imports import listToMidi
 
 import tree_class
 from tree_class import forest
-
-def _I2Cout(input_list,bus = 0,teensy_address = 8):
-    val = str(input_list)
-    input_str = "i2cset -f -y {} {} {}".format(bus,teensy_address,val)
-
-    os.system(input_str)
 
 def Main():
     serial_port = serial.Serial(
@@ -42,9 +37,7 @@ def Main():
     initial_flag = True #first pass has different calling
     chord_out = None #initial chord for sending purposes
     try:
-        # Send a simple header
-        serial_port.write("UART Demonstration Program\r\n".encode())
-        serial_port.write("NVIDIA Jetson Nano Developer Kit\r\n".encode())
+        print("Loop Started")
         while True:
             if serial_port.inWaiting() > 0:
                 data = serial_port.read()
@@ -89,7 +82,7 @@ def Main():
                 #data check
                 if chord_out != None:
                     #call I2C function
-                    pass
+                    i2c_out(chord_out) #send data out
                 else:
                     print("chord out doesn't exist")
 
@@ -113,11 +106,13 @@ if __name__ == '__main__':
     
     chordForest = forest(tree_bases,data,\
                          word_to_ix,ix_to_chord)
-    
-    #test code below
-    while True:
-        #call main function
-        Main()
+    #call main function
+    Main()
+
+
+
+
+
  #    while True:
  #        #jetson only code##################################
  #        #code selects a starting chord from the tree_bases

@@ -25,6 +25,25 @@ print("Data Type: {}\n".format(type(data_in_byte_array[0])))
 print("Stop Byte: ",stop_byte)
 print("Base 10  : {}".format(int(stop_byte,2)))
 
+#convert each num in list too base 10
+	#data_in_num = []
+	#for note in test_string:
+	#	data_in_num.append(int(bin(note)[2:],2))
 
 
-# ''.join(bin(ord(c)) for c in string).replace('b','')
+print("\n\nstring to list test:\n")
+data_str = "[51, 42, 63]"
+print("Original: ",data_str)
+data_str.replace(" ","")
+print("No Whitespace: ",data_str)
+
+data_list =  data_str.strip('][').split(',')
+print(data_list)
+print("as ints")
+int_list = [int(x) for x in data_list]
+print(int_list)
+
+print(ast.literal_eval(data_str))
+
+
+
