@@ -29,83 +29,89 @@ class modelMain():
 		self.idx = 0 #index to decide if progression is over
 		self.initial_flag = True #first pass has different calling
 		self.chord_out = None #initial chord for sending purposes
+		self.data_list = None
 	def __modelcheck(self):
-if initial_flag == True:
-                    #grab starting chord
-                    if data_list in tree_bases:
+		if initial_flag == True:
+            #grab starting chord
+			if self.data_list in tree_bases:
 
-                        base_index = tree_bases.index(data_list)
-                        start_chord = tree_bases[base_index]
-                    else:
-                        print("input not found, defaulting to first option")
-                        start_chord = tree_bases[0]
+			    base_index = tree_bases.index(self.data_list)
+			    start_chord = tree_bases[base_index]
+			else:
+			    print("input not found, defaulting to first option")
+			    start_chord = tree_bases[0]
 
-                    #create random version
-                    chordForest.update_current_tree(start_chord)
-                    random_prog = chordForest.random_chord_progression()
-                    idx += 1 #send next chord
-                    chord_out = random_prog[idx] #grab first chord
+			#create random version
+			chordForest.update_current_tree(start_chord)
+			random_prog = chordForest.random_chord_progression()
+			idx += 1 #send next chord
+			self.chord_out = random_prog[idx] #grab first chord
 
-                    print(random_prog)
-                    initial_flag = False
-                else:
-                    if tree_bases[idx+1] == data_list:
-                        idx += 1
-                        chord_out = random_prog[idx]
-                    else:
+			print(random_prog)
+			initial_flag = False
+		else:
+			if tree_bases[idx+1] == self.data_list:
+			    idx += 1
+			    self.chord_out = random_prog[idx]
+			else:
 
-                        if data_list in tree_bases:
-                            base_index = tree_bases.index(data_list)
-                            start_chord = tree_bases[base_index]
-                        else:
-                            print("input not found, defaulting to first option")
-                            start_chord = tree_bases[0]
-                        #new progression & if idx == 3
-                        chordForest.update_current_tree(start_chord) #create new progression
-                        random_prog = chordForest.random_chord_progression()
-                        idx = 1
-                        chord_out = random_prog[idx]
+			    if self.data_list in tree_bases:
+			        base_index = tree_bases.index(self.data_list)
+			        start_chord = tree_bases[base_index]
+			    else:
+			        print("input not found, defaulting to first option")
+			        start_chord = tree_bases[0]
+			    #new progression & if idx == 3
+			    chordForest.update_current_tree(start_chord) #create new progression
+			    random_prog = chordForest.random_chord_progression()
+			    idx = 1
+			    self.chord_out = random_prog[idx]
+	def run_model(data_in):
+		self.data_in = data_in
+		__modelcheck()
+		return self.chord_out
+
 		
 		
 
 def Main():
-    serial_port = serial.Serial(
-        port="/dev/ttyTHS1",
-        baudrate=115200,
-        bytesize=serial.EIGHTBITS,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-    )
-    # Wait a second to let the port initialize
-    time.sleep(1)
-    try:
-        print("Loop Started")
-        while True:
-            if serial_port.inWaiting() > 0:
-                data = serial_port.read()
-                print(data)
-                #convert to list
-                data_list = ast.literal_eval(data)
+	serial_port = serial.Serial(
+	    port="/dev/ttyTHS1",
+	    baudrate=115200,
+	    bytesize=serial.EIGHTBITS,
+	    parity=serial.PARITY_NONE,
+	    stopbits=serial.STOPBITS_ONE,
+	)
+	# Wait a second to let the port initialize
+	time.sleep(1)
+	model = modelMain()
+	try:
+		print("Loop Started")
+		while True:
+			if serial_port.inWaiting() > 0:
+				data = serial_port.read()
+				print(data)
+				#convert to list
+				chord_out = model.run_model(data_in)
+				#data check
+				if chord_out != None:
+				    #call I2C function
+				    i2c_out(chord_out) #send data out
+				else:
+				    print("chord out doesn't exist")
 
-                #data check
-                if chord_out != None:
-                    #call I2C function
-                    i2c_out(chord_out) #send data out
-                else:
-                    print("chord out doesn't exist")
 
 
+	except KeyboardInterrupt:
+	    print("Exiting Program")
 
-    except KeyboardInterrupt:
-        print("Exiting Program")
+	except Exception as exception_error:
+	    print("Error occurred. Exiting Program")
+	    print("Error: " + str(exception_error))
 
-    except Exception as exception_error:
-        print("Error occurred. Exiting Program")
-        print("Error: " + str(exception_error))
-
-    finally:
-        serial_port.close()
-        pass
+	finally:
+	    serial_port.close()
+	    pass
 
 if __name__ == '__main__':
     #initialize datasets
