@@ -5,6 +5,9 @@ Created on Tue May  4 12:49:51 2021
 @author: james
 """
 
+#UART Packages
+
+
 #Main File for Jetson Inference Package
 from tree_imports import dataset
 from tree_imports import word_to_ix
@@ -13,7 +16,9 @@ from tree_imports import listToMidi
 
 import tree_class
 from tree_class import forest
-    
+
+def _uartIn():
+	pass
 
 if __name__ == '__main__':
     data = tree_class.dataset_converter(dataset)
