@@ -10,12 +10,21 @@ if __name__ == '__main__':
 	import ast
 	
 	#test data, but will be passed later
-	test_string = str([12,24,16])
+	test_string = [12,24,16]
+
+	stop_bit = "z"
+	stop_byte = format(ord(stop_bit),'08b')
+
+	data_in_num = []
+	for note in data_in:
+		data_in_num.append(int(bin(note)[2:],2))
+
 
 	bus = 0
-	teensy_address = 8
-	input_str = "i2cset -f -y {} {} {}".format(bus,teensy_address,test_string)
+	teensy_address = 9
+	for num in data_in_num:
+		input_str = "i2cset -f -y {} {} {}".format(bus,teensy_address,num)
+		print(input_str)
+		os.system(input_str)
 
-	print(input_str)
-	os.system(input_str)
-	print("data sent")
+	print("Packet Sent")
