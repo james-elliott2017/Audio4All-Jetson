@@ -31,7 +31,7 @@ class modelMain():
 		self.initial_flag = True #first pass has different calling
 		self.chord_out = None #initial chord for sending purposes
 		self.data_list = None
-	def __output_converter(input_chord_list,min_check = 41,max_check = 60):
+	def output_converter(input_chord_list,min_check = 41,max_check = 60):
 		if min(input_chord_list) < min_check:
 			out_list = [x+12 for x in input_chord_list]
 		elif max(input_chord_list) > max_check:
@@ -131,7 +131,7 @@ def Main():
 						lst = char_to_str(char_list) #convert char list to string
 						chord_list = ast.literal_eval(lst) #convert string literal to list
 						chord_out = model.run_model(chord_list)
-						board_out = model.__output_converter(chord_out)
+						board_out = model.output_converter(chord_out)
 					##########################################################################
 						print("Progression:\n{}".format(model.random_prog))
 						print("Next Chord: {}".format(chord_out))
