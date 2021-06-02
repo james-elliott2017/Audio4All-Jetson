@@ -31,7 +31,7 @@ class modelMain():
 		self.chord_out = None #initial chord for sending purposes
 		self.data_list = None
 	def __modelcheck(self):
-		if initial_flag == True:
+		if self.initial_flag == True:
             #grab starting chord
 			if self.data_list in tree_bases:
 
@@ -43,36 +43,47 @@ class modelMain():
 
 			#create random version
 			chordForest.update_current_tree(start_chord)
-			random_prog = chordForest.random_chord_progression()
-			idx += 1 #send next chord
-			self.chord_out = random_prog[idx] #grab first chord
+			self.random_prog = chordForest.random_chord_progression()
+			self.idx += 1 #send next chord
+			self.chord_out = self.random_prog[self.idx] #grab first chord
 
-			print(random_prog)
-			initial_flag = False
+			self.initial_flag = False
 		else:
-			if tree_bases[idx+1] == self.data_list:
-			    idx += 1
-			    self.chord_out = random_prog[idx]
+			#check if user clicked the recommended chord from last session
+			if self.chord_out == self.data_list and self.idx < 3:
+			    print("Progression Followed")
+			    self.idx += 1
+			    self.chord_out = self.random_prog[self.idx]
+			#progression completed check
+			elif self.idx == 3 and self.chord_out == self.data_list:
+				print("Progression Completed, checking for new progression\n\n")
+				if self.data_list in tree_bases:
+					base_index = tree_bases.index(self.data_list)
+					start_chord = tree_bases[base_index]
+				else:
+					print("input not found, defaulting to first option")
+					start_chord = tree_bases[0]
+				#new progression & if self.idx == 3
+				chordForest.update_current_tree(start_chord) #create new progression
+				self.random_prog = chordForest.random_chord_progression()
+				self.idx = 1
+				self.chord_out = self.random_prog[self.idx]
 			else:
-
 			    if self.data_list in tree_bases:
 			        base_index = tree_bases.index(self.data_list)
 			        start_chord = tree_bases[base_index]
 			    else:
 			        print("input not found, defaulting to first option")
 			        start_chord = tree_bases[0]
-			    #new progression & if idx == 3
+			    #new progression & if self.idx == 3
 			    chordForest.update_current_tree(start_chord) #create new progression
-			    random_prog = chordForest.random_chord_progression()
-			    idx = 1
-			    self.chord_out = random_prog[idx]
-	def run_model(data_in):
-		self.data_in = data_in
-		__modelcheck()
+			    self.random_prog = chordForest.random_chord_progression()
+			    self.idx = 1
+			    self.chord_out = self.random_prog[self.idx]
+	def run_model(self,data_in):
+		self.data_list = list(data_in)
+		self.__modelcheck()
 		return self.chord_out
-
-		
-		
 
 def Main():
 	serial_port = serial.Serial(
@@ -92,15 +103,13 @@ def Main():
 				data = serial_port.read()
 				print(data)
 				#convert to list
-				chord_out = model.run_model(data_in)
+				chord_out = model.run_model(data)
 				#data check
 				if chord_out != None:
 				    #call I2C function
 				    i2c_out(chord_out) #send data out
 				else:
 				    print("chord out doesn't exist")
-
-
 
 	except KeyboardInterrupt:
 	    print("Exiting Program")

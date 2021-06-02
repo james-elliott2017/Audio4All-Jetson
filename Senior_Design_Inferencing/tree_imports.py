@@ -5,7 +5,8 @@ Created on Tue May  4 11:34:47 2021
 """
 
 #imports
-import torch
+#import torch
+from torch import load
 
 from mido import Message, MidiFile, MidiTrack
 
@@ -17,7 +18,7 @@ import pickle
 #print("Imports Complete")
 
 data_file = r"tensor_essentialDataset.pt"
-dataset = torch.load(data_file)
+dataset = load(data_file)
 #print(dataset.shape)
 
 
