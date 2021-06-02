@@ -44,7 +44,8 @@ try:
             	char_list.append(data)
             	#print("Package Collected:\n{}".format(char_list))
             	lst = char_to_str(char_list)
-            	print(type(lst))
+                chord_list = ast.literal_eval(lst)
+            	print(type(chord_list))
             	print("List Version: {}".format(lst))
             	i2c_out(lst)
             	char_list = ["none"]
