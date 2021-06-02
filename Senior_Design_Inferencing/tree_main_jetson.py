@@ -107,7 +107,7 @@ def Main():
 				#data check
 				if chord_out != None:
 				    #call I2C function
-				    i2c_out(chord_out) #send data out
+				    i2c_out(list(chord_out)) #send data out
 				else:
 				    print("chord out doesn't exist")
 
