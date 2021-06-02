@@ -5,7 +5,7 @@ Created on Tue May  4 12:49:51 2021
 @author: james
 """
 
-import ast
+import codecs
 #UART Packages
 import time
 import serial
@@ -97,31 +97,33 @@ def Main():
 	# Wait a second to let the port initialize
 	time.sleep(1)
 	model = modelMain()
+	print("Ready for Mail")
 	try:
 		print("Loop Started")
+		char_list = ["none"]
 		while True:
-			if serial_port.inWaiting() > 0:
-	            data = serial_port.read()
-	            #print("Message Received")
-	            data = str(codecs.decode(data,"UTF-8")).replace(" ","")
-	            #print(data)
-	            if data == "[":
-	            	char_list[0] = data
-	            elif char_list[0] == "[" and data == "]":
-	            	char_list.append(data)
-	            	#print("Package Collected:\n{}".format(char_list))
+		    if serial_port.inWaiting() > 0:
+	            	data = serial_port.read()
+	            	#print("Message Received")
+	            	data = str(codecs.decode(data,"UTF-8")).replace(" ","")
+	            	#print(data)
+	            	if data == "[":
+	            		char_list[0] = data
+	            	elif char_list[0] == "[" and data == "]":
+	            		char_list.append(data)
+	            		#print("Package Collected:\n{}".format(char_list))
 
 	            	####################MODEL CODE############################################
-	            	lst = char_to_str(char_list) #convert char list to string
-	            	chord_list = ast.literal_eval(chord_list) #convert string literal to list
-	            	chord_out = model.run_model(chord_list)
+	            		lst = char_to_str(char_list) #convert char list to string
+	            		chord_list = ast.literal_eval(lst) #convert string literal to list
+	            		chord_out = model.run_model(chord_list)
 	            	##########################################################################
-
-	            	print("List Version: {}".format(lst))
-	            	i2c_out(chord_out)
-	            	char_list = ["none"] #RESET CHAR LIST FOR NEXT TRANSMISSION
-	            elif char_list[0] == "[":
-	            	char_list.append(data)
+	            		print("Progression:\n{}".format(model.random_prog))
+	            		print("Next Chord: {}".format(chord_out))
+	            		i2c_out(chord_out)
+	            		char_list = ["none"] #RESET CHAR LIST FOR NEXT TRANSMISSION
+	            	elif char_list[0] == "[":
+	            		char_list.append(data)
 
 	except KeyboardInterrupt:
 	    print("Exiting Program")
