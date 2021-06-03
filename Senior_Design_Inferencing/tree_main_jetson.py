@@ -31,7 +31,7 @@ class modelMain():
 		self.initial_flag = True #first pass has different calling
 		self.chord_out = None #initial chord for sending purposes
 		self.data_list = None
-	def output_converter(input_chord_list,min_check = 41,max_check = 60):
+	def output_converter(self,input_chord_list,min_check = 41,max_check = 60):
 		if min(input_chord_list) < min_check:
 			out_list = [x+12 for x in input_chord_list]
 		elif max(input_chord_list) > max_check:
@@ -41,17 +41,33 @@ class modelMain():
 		else:
 			out_list = input_chord_list
 		return out_list
+	def _input_converter(self,tree_bases):
+		"""
+		Aux function for deciding which version of tree_bases to use. simply below code because of multiple calls.
+		"""
+		if (self.data_list in tree_bases):
+			base_index = tree_bases.index(self.data_list)
+			start_chord = tree_bases[base_index]
+		elif ([x-12 for x in self.data_list] in tree_bases):
+			self.data_list = [x-12 for x in self.data_list]
+			base_index = tree_bases.index(self.data_list)
+			start_chord = tree_bases[base_index]
+		elif ([x+12 for x in self.data_list] in tree_bases):
+			self.data_list = [x+12 for x in self.data_list]
+			base_index = tree_bases.index(self.data_list)
+			start_chord = tree_bases[base_index]
+		elif: ([x+24 for x in self.data_list] in tree_bases):
+			self.data_list = [x+24 for x in self.data_list]
+			base_index = tree_bases.index(self.data_list)
+			start_chord = tree_bases[base_index]
+		else:
+			print("input not found, defaulting to first option")
+			start_chord = tree_bases[0]
+		return start_chord
 	def __modelcheck(self):
 		if self.initial_flag == True:
 			#grab starting chord
-			if (self.data_list in tree_bases) or ([x-12 for x in self.data_list] in tree_bases) or ([x+12 for x in self.data_list] in tree_bases)\
-				or ([x+24 for x in self.data_list] in tree_bases):
-
-				base_index = tree_bases.index(self.data_list)
-				start_chord = tree_bases[base_index]
-			else:
-				print("input not found, defaulting to first option")
-				start_chord = tree_bases[0]
+			start_chord = self._input_converter(tree_bases)
 
 			#create random version
 			chordForest.update_current_tree(start_chord)
@@ -69,8 +85,9 @@ class modelMain():
 				self.chord_out = self.random_prog[self.idx]
 			#progression completed check
 			elif (self.idx == 3) and ((self.chord_out == self.data_list) or (self.chord_out == [x-12 for x in self.data_list])\
-				or (self.chord_out == [x+12 for x in self.data_list]) or (self.chord_out == [x+24 for x in self.data_list])):
+						or (self.chord_out == [x+12 for x in self.data_list]) or (self.chord_out == [x+24 for x in self.data_list])):
 				print("Progression Completed, checking for new progression\n\n")
+				self.data_list = self._input_converter(tree_bases)
 				if self.data_list in tree_bases:
 					base_index = tree_bases.index(self.data_list)
 					start_chord = tree_bases[base_index]
@@ -85,6 +102,7 @@ class modelMain():
 			else:
 				if (self.data_list in tree_bases) or ([x-12 for x in self.data_list] in tree_bases) or ([x+12 for x in self.data_list] in tree_bases)\
 					or ([x+24 for x in self.data_list] in tree_bases):
+					self.data_list = self._input_converter(tree_bases)
 					base_index = tree_bases.index(self.data_list)
 					start_chord = tree_bases[base_index]
 				else:
